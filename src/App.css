@@ -1,0 +1,22 @@
+.parent-div {
+  pointer-events: none;
+  /* Bloqueia interação com a div principal */
+}
+
+.child-div.focusable {
+  pointer-events: auto;
+  /* Permite interação com esta div */
+}
+
+.child-div.non-focusable {
+  pointer-events: none;
+  /* Bloqueia interação com esta div */
+}
+
+.focusable {
+  outline: none;
+}
+
+.non-focusable {
+  opacity: 0.5;
+}
