@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import VictoryGrid from "./VictoryGrid";
 import { useGameTips } from "../../../context/GameTipsProp";
 
-interface WinPopupProps {
+interface LosePopupProps {
   visible: boolean;
 }
 
-const WinPopup: React.FC<WinPopupProps> = ({ visible }) => {
+const LosePopup: React.FC<LosePopupProps> = ({ visible }) => {
   const { gameTips } = useGameTips();
   const [isVisible, setIsVisible] = useState(visible);
 
@@ -26,7 +26,7 @@ const WinPopup: React.FC<WinPopupProps> = ({ visible }) => {
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
         <div className="bg-gray-600 text-white text-center p-6 rounded-lg shadow-lg w-96">
           <span className="text-2xl mb-4 font-sans font-semibold tracking-wider">
-            Parabéns! Você ganhou!
+            Que pena! Você perdeu!
           </span>
           <VictoryGrid gameTips={gameTips} />
           <div className="mt-4">
@@ -43,4 +43,4 @@ const WinPopup: React.FC<WinPopupProps> = ({ visible }) => {
   );
 };
 
-export default WinPopup;
+export default LosePopup;

@@ -48,10 +48,8 @@
 
 @media (max-width: 550px) {
   .backspace {
-      grid-column: 28/ span 6;
+      grid-column: 28/ span 3;
     }
-  
-  
   
     .q {
       grid-column: 1/ span 3;
@@ -66,14 +64,14 @@
     }
   
     .enter {
-      grid-column: 24/ span 10;
+      grid-column: 24/ span 7;
     }
 
   .keyboard-grid {
     margin-top: 12px;
       display: grid;
       gap: 5px;
-      grid-template-columns: repeat(33, 1fr);
+      grid-template-columns: repeat(30, 1fr);
       grid-template-rows: repeat(3, 1fr);
       width: 100%;
       max-width: 520px;

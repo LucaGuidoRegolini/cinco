@@ -8,7 +8,7 @@ interface GameProps {
 
 function Game({ word, onInputChange }: GameProps) {
   const [inputValues, setInputValues] = useState<string[]>(["", "", "", "", "", ""]);
-  const [unlokedRow, setUnlockedRow] = useState(0);
+  const [unlockedRow, setUnlockedRow] = useState(0);
 
   // Função que recebe o valor do filho e atualiza o estado do pai
   const handleValuesChange = (newValues: string, index: number) => {
@@ -19,7 +19,6 @@ function Game({ word, onInputChange }: GameProps) {
 
     onInputChange(newInputValues);
   };
-
   return (
     <div className="flex justify-center">
       <div className="flex flex-col gap-2">
@@ -27,7 +26,7 @@ function Game({ word, onInputChange }: GameProps) {
           <InputRow
             key={index}
             wordTarget={word}
-            isLocked={index !== unlokedRow}
+            isLocked={index !== unlockedRow}
             onValuesChange={(newValues) => handleValuesChange(newValues, index)}
           />
         ))}

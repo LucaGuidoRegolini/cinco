@@ -1,5 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import "./row.css";
+import { Tips, useGameTips } from "../../../context/GameTipsProp";
+import wordsJson from "../../../assets/word.json";
+import { findStringInArray } from "../../../utils/compareWords";
+
+interface Word {
+  words: string[];
+}
+
+const words = wordsJson as Word;
 
 interface InputRowProps {
   onValuesChange: (newValues: string) => void;
@@ -7,14 +16,14 @@ interface InputRowProps {
   wordTarget: string;
 }
 
-type Tips = "wrong" | "almost" | "right" | "";
-
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProps) {
+  const { gameTips, setGameTips } = useGameTips();
   const [isSending, setIsSending] = useState<boolean | undefined>();
   const [isChanging, setChanging] = useState<boolean | undefined>();
   const [values, setValues] = useState(["", "", "", "", ""]);
+  const [word, setWord] = useState(["", "", "", "", ""]);
   const [wordTips, setWordTips] = useState<Tips[]>(["", "", "", "", ""]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(0);
   const [animating, setAnimating] = useState<undefined | number>(undefined);
@@ -30,6 +39,7 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
 
   useEffect(() => {
     if (isSending) onValuesChange(values.join(""));
+    if (isChanging) handleTipsReveal(wordTips);
   }, [isSending]);
 
   useEffect(() => {
@@ -49,24 +59,38 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
     };
   }, [focusedIndex, isLocked, isSending, isChanging, values]);
 
+  const handleTipsReveal = (tips: Tips[]) => {
+    const newGameTips = [...gameTips];
+    newGameTips.push(tips);
+    setGameTips(newGameTips);
+  };
+
   const verifyWord = (): Tips[] => {
     const wordTargetArray = wordTarget.split("");
-    const resp: Tips[] = [];
+    const tips: Tips[] = Array(values.length).fill("wrong");
+    const usedIndices: Set<number> = new Set();
 
-    values.map((value, index) => {
-      if (value === "") resp[index] = "";
-      else if (value === wordTarget.split("")[index]) {
+    values.forEach((character, index) => {
+      if (character === wordTargetArray[index]) {
+        tips[index] = "right";
+        usedIndices.add(index);
         wordTargetArray[index] = "";
-        resp[index] = "right";
-      } else if (wordTargetArray.includes(value)) {
-        wordTargetArray[wordTarget.indexOf(value)] = "";
-        resp[index] = "almost";
-      } else {
-        resp[index] = "wrong";
       }
     });
 
-    return resp;
+    values.forEach((character, index) => {
+      if (
+        tips[index] === "wrong" &&
+        !usedIndices.has(index) &&
+        wordTargetArray.includes(character)
+      ) {
+        tips[index] = "almost";
+        usedIndices.add(index);
+        wordTargetArray[wordTargetArray.indexOf(character)] = "";
+      }
+    });
+
+    return tips;
   };
 
   const animateTipsReveal = async (tips: Tips[]) => {
@@ -112,6 +136,15 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
     } else if (key === "ArrowRight") {
       focusNext(index);
     } else if (key === "Enter" && !values.includes("")) {
+      const wordIsValid = findStringInArray(values.join(""), words.words);
+
+      if (!wordIsValid) {
+        console.log("Palavra inválida");
+        return;
+      }
+
+      setWord(wordIsValid.toUpperCase().split(""));
+
       const wordTips = verifyWord();
       setChanging(true);
       setFocusedIndex(null);
@@ -186,7 +219,7 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
             ${flippingIndex === index ? "animate-flip" : ""}
           `}
         >
-          {value}
+          {wordTips[index] !== "" ? word[index] : value}
         </div>
       ))}
     </div>
