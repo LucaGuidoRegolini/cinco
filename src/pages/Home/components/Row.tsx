@@ -3,6 +3,7 @@ import "./row.css";
 import { Tips, useGameTips } from "../../../context/GameTipsProp";
 import wordsJson from "../../../assets/word.json";
 import { findStringInArray } from "../../../utils/compareWords";
+import { useAlert } from "../../../context/AlertProp";
 
 interface Word {
   words: string[];
@@ -19,6 +20,7 @@ interface InputRowProps {
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProps) {
+  const { setAlert } = useAlert();
   const { gameTips, setGameTips } = useGameTips();
   const [isSending, setIsSending] = useState<boolean | undefined>();
   const [isChanging, setChanging] = useState<boolean | undefined>();
@@ -111,6 +113,24 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
     setIsSending(true);
   };
 
+  const animateInvalid = async (tips: Tips[]) => {
+    for (let index = 0; index < tips.length; index++) {
+      setFlippingIndex(index); // Define o índice atual para a animação
+      await delay(300);
+
+      setWordTips((prev) => {
+        const newTips = [...prev];
+        newTips[index] = tips[index];
+        return newTips;
+      });
+
+      await delay(300);
+    }
+
+    setFlippingIndex(null); // Reseta o estado após todas as animações
+    setIsSending(true);
+  };
+
   const handleKeyDown = (key: string, index: number) => {
     if (isLocked || isSending || isChanging) return;
 
@@ -139,7 +159,7 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
       const wordIsValid = findStringInArray(values.join(""), words.words);
 
       if (!wordIsValid) {
-        console.log("Palavra inválida");
+        setAlert("Palavra inválida!");
         return;
       }
 
