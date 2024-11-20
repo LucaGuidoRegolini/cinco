@@ -15,23 +15,38 @@ interface InputRowProps {
   onValuesChange: (newValues: string) => void;
   isLocked: boolean;
   wordTarget: string;
+  initialValues?: string[];
 }
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProps) {
+function InputRow({
+  onValuesChange,
+  isLocked = false,
+  wordTarget,
+  initialValues,
+}: InputRowProps) {
   const { setAlert } = useAlert();
   const { gameTips, setGameTips } = useGameTips();
   const [isSending, setIsSending] = useState<boolean | undefined>();
   const [isChanging, setChanging] = useState<boolean | undefined>();
-  const [values, setValues] = useState(["", "", "", "", ""]);
+  const [values, setValues] = useState(initialValues || ["", "", "", "", ""]);
   const [word, setWord] = useState(["", "", "", "", ""]);
   const [wordTips, setWordTips] = useState<Tips[]>(["", "", "", "", ""]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(0);
   const [animating, setAnimating] = useState<undefined | number>(undefined);
+  const [errorAnimating, setErrorAnimating] = useState<boolean>(false);
   const [flippingIndex, setFlippingIndex] = useState<number | null>(null);
   const [removeAnimating, setRemoveAnimating] = useState<undefined | number>(undefined);
   const inputRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    if (initialValues) {
+      const tips = verifyWord();
+      setWordTips(tips);
+      setWord(initialValues);
+    }
+  }, []);
 
   useEffect(() => {
     if (focusedIndex !== null) {
@@ -113,22 +128,10 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
     setIsSending(true);
   };
 
-  const animateInvalid = async (tips: Tips[]) => {
-    for (let index = 0; index < tips.length; index++) {
-      setFlippingIndex(index); // Define o índice atual para a animação
-      await delay(300);
-
-      setWordTips((prev) => {
-        const newTips = [...prev];
-        newTips[index] = tips[index];
-        return newTips;
-      });
-
-      await delay(300);
-    }
-
-    setFlippingIndex(null); // Reseta o estado após todas as animações
-    setIsSending(true);
+  const animateInvalid = async () => {
+    setErrorAnimating(true);
+    await delay(300);
+    setErrorAnimating(false);
   };
 
   const handleKeyDown = (key: string, index: number) => {
@@ -160,6 +163,7 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
 
       if (!wordIsValid) {
         setAlert("Palavra inválida!");
+        animateInvalid();
         return;
       }
 
@@ -183,14 +187,14 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
   };
 
   const focusNext = (index: number) => {
-    let nextIndex = index + 1;
+    const nextIndex = index + 1;
     if (nextIndex < values.length) {
       setFocusedIndex(nextIndex);
     }
   };
 
   const focusPrev = (index: number) => {
-    let prevIndex = index - 1;
+    const prevIndex = index - 1;
     if (prevIndex >= 0) {
       setFocusedIndex(prevIndex);
     }
@@ -224,7 +228,7 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
           ref={(el) => (inputRefs.current[index] = el)}
           tabIndex={0}
           onClick={() => handleClick(index)}
-          className={`w-16 h-14 flex items-center justify-center border cursor-pointer rounded-lg font-sans font-semibold text-5xl focus:outline-none 
+          className={`w-14 h-12 flex items-center justify-center border cursor-pointer rounded-lg font-sans font-semibold text-5xl focus:outline-none 
             ${wordTips[index] === "right" ? "bg-green-500 text-white" : ""}
             ${wordTips[index] === "almost" ? "bg-yellow-500 text-white" : ""}
             ${wordTips[index] === "wrong" ? "bg-gray-500 text-white" : ""}
@@ -234,6 +238,7 @@ function InputRow({ onValuesChange, isLocked = false, wordTarget }: InputRowProp
                 : "border-gray-300"
             } 
             ${animating === index ? "animate-scale" : ""}
+            ${errorAnimating ? "animate-flip" : ""}
             ${removeAnimating === index ? "animate-inverse-scale" : ""}
             ${isLocked ? "bg-gray-500 border-gray-500" : "focused"}
             ${flippingIndex === index ? "animate-flip" : ""}

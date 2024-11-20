@@ -7,7 +7,6 @@
   width: 100%;
   max-width: 800px;
   min-width: 400px;
-    
 }
 
 .key {
@@ -24,61 +23,58 @@
 }
 
 .backspace {
-  grid-column: 30/ span 4;
+  grid-column: 30 / span 4;
 }
-
-
 
 .q {
-  grid-column: 2/ span 3;
+  grid-column: 2 / span 3;
 }
 
-.a{
-  grid-column: 3/ span 3;
+.a {
+  grid-column: 3 / span 3;
 }
 
 .z {
-  grid-column: 4/ span 3;
+  grid-column: 4 / span 3;
 }
 
 .enter {
-  grid-column: 26/ span 8;
+  grid-column: 26 / span 8;
 }
-
 
 @media (max-width: 550px) {
   .backspace {
-      grid-column: 28/ span 3;
-    }
-  
-    .q {
-      grid-column: 1/ span 3;
-    }
-  
-    .a {
-      grid-column: 1/ span 3;
-    }
-  
-    .z {
-      grid-column: 1/ span 3;
-    }
-  
-    .enter {
-      grid-column: 24/ span 7;
-    }
+    grid-column: 28 / span 3;
+  }
+
+  .q {
+    grid-column: 1 / span 3;
+  }
+
+  .a {
+    grid-column: 1 / span 3;
+  }
+
+  .z {
+    grid-column: 1 / span 3;
+  }
+
+  .enter {
+    grid-column: 24 / span 7;
+  }
 
   .keyboard-grid {
-    margin-top: 12px;
-      display: grid;
-      gap: 5px;
-      grid-template-columns: repeat(30, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      width: 100%;
-      max-width: 520px;
-      min-width: 200px;
-    }
-  
-    .key { 
-      height: 60px;
-    }
+    margin: 18px 1px 0 1px;
+    display: grid;
+    gap: 5px;
+    grid-template-columns: repeat(30, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 97vw;
+    max-width: 520px;
+    min-width: 200px;
+  }
+
+  .key {
+    height: 60px;
+  }
 }

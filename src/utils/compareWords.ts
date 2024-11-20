@@ -10,3 +10,7 @@ export function findStringInArray(target: string, array: string[]): string | und
 
   return array.find((item) => normalizeString(item) === normalizedTarget);
 }
+
+export function capitalizeFirstLetter(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

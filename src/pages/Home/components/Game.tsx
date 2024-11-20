@@ -3,12 +3,17 @@ import { useState } from "react";
 
 interface GameProps {
   word: string;
+  initialInputValues: string[];
   onInputChange: (value: string[]) => void;
 }
 
-function Game({ word, onInputChange }: GameProps) {
-  const [inputValues, setInputValues] = useState<string[]>(["", "", "", "", "", ""]);
-  const [unlockedRow, setUnlockedRow] = useState(0);
+function Game({ word, onInputChange, initialInputValues }: GameProps) {
+  console.log(initialInputValues);
+  const initialPosition = initialInputValues.findIndex((value) => value == "");
+  const [inputValues, setInputValues] = useState<string[]>(initialInputValues);
+  const [unlockedRow, setUnlockedRow] = useState(
+    initialPosition === -1 ? 0 : initialPosition
+  );
 
   // Função que recebe o valor do filho e atualiza o estado do pai
   const handleValuesChange = (newValues: string, index: number) => {
@@ -25,6 +30,9 @@ function Game({ word, onInputChange }: GameProps) {
         {inputValues.map((_value, index) => (
           <InputRow
             key={index}
+            initialValues={
+              inputValues[index] != "" ? inputValues[index].split("") : undefined
+            }
             wordTarget={word}
             isLocked={index !== unlockedRow}
             onValuesChange={(newValues) => handleValuesChange(newValues, index)}
