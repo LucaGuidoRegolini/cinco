@@ -8,7 +8,6 @@ interface GameProps {
 }
 
 function Game({ word, onInputChange, initialInputValues }: GameProps) {
-  console.log(initialInputValues);
   const initialPosition = initialInputValues.findIndex((value) => value == "");
   const [inputValues, setInputValues] = useState<string[]>(initialInputValues);
   const [unlockedRow, setUnlockedRow] = useState(

@@ -33,6 +33,12 @@ function Home() {
   const [userWin, setUserWin] = useState<boolean>(false);
   const [userLose, setUserLose] = useState<boolean>(false);
 
+  const deleteGameData = () => {
+    localStorage.removeItem("randomIndex");
+    localStorage.removeItem("initTime");
+    localStorage.removeItem("inputValues");
+  };
+
   useEffect(() => {
     if (!storedIndex) {
       localStorage.setItem("randomIndex", String(randomIndex));
@@ -56,10 +62,12 @@ function Home() {
       if (value !== normalizedWord) return;
 
       setUserWin(true);
+      deleteGameData();
     });
 
     if (!userWin && inputValues.filter((value) => value !== "").length === 6) {
       setUserLose(true);
+      deleteGameData();
     }
   };
 
