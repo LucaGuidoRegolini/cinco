@@ -238,7 +238,7 @@ function InputRow({
                 : "border-gray-300"
             } 
             ${animating === index ? "animate-scale" : ""}
-            ${errorAnimating ? "animate-flip" : ""}
+            ${errorAnimating ? "animate-shake" : ""}
             ${removeAnimating === index ? "animate-inverse-scale" : ""}
             ${isLocked ? "bg-gray-500 border-gray-500" : "focused"}
             ${flippingIndex === index ? "animate-flip" : ""}

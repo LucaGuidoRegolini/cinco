@@ -1,0 +1,40 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches:
+      - main # Dispara o workflow quando há push na branch 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout do código
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Configura a versão do Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # Escolha a versão necessária
+
+      # Instala dependências e build do projeto
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+
+      # Configuração da AWS CLI
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # Altere para sua região
+
+      # Envia os arquivos para o S3
+      - name: Deploy to S3
+        run: |
+          aws s3 sync ./build s3://game-cinco --delete
