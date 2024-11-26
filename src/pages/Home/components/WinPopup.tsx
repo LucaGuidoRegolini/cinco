@@ -46,8 +46,15 @@ const WinPopup: React.FC<WinPopupProps> = ({
     }
   }, [initTime, visible]);
 
+  const deleteGameData = () => {
+    localStorage.removeItem("randomIndex");
+    localStorage.removeItem("initTime");
+    localStorage.removeItem("inputValues");
+  };
+
   const handlePlayAgain = () => {
     setIsVisible(false);
+    deleteGameData();
     window.location.reload();
   };
 
