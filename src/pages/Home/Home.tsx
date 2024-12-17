@@ -51,14 +51,16 @@ function Home() {
   }, [inputValues]);
 
   const verifyIfWin = () => {
+    let isWin = false;
     inputValues.map((value) => {
       if (value === "") return;
       if (value !== normalizedWord) return;
 
       setUserWin(true);
+      isWin = true;
     });
 
-    if (!userWin && inputValues.filter((value) => value !== "").length === 6) {
+    if (!isWin && inputValues.filter((value) => value !== "").length === 6) {
       setUserLose(true);
     }
   };
